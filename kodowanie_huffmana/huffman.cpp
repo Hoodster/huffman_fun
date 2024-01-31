@@ -6,6 +6,35 @@
 void huffman::encode(char d[], int frequency[])
 {
 	int size = sizeof(d) / sizeof(d[0]);
+
+	priority_queue<MinHeapNode*, vector<MinHeapNode*>, comparator> priorityQ;
+
+	for (int i = 0; i < size; i++)
+	{
+		auto node = new MinHeapNode(d[i],frequency[i]);
+		priorityQ.push(node);
+	}
+
+	MinHeapNode root = NULL;
+
+	while (priorityQ.size() > 1)
+	{
+		auto minFreqNode = priorityQ.top();
+		priorityQ.pop();
+		
+		auto secondMinFreqNode = priorityQ.poll();
+		priorityQ.pop();
+
+		auto combinedFrequency = minFreqNode.frequency + secondMinFreqNode.frequency;
+		auto freq_node = new MinHeapNode('-', combinedFrequency);
+		freq_node.left = minFreqNode;
+		freq_node.right = secondMinFreqNode;
+
+		root = freq_node;
+
+		priorityQ.push(freq_node);
+	}
+	
 }
 
 bool huffman::compareToRight(MinHeapNode* l, MinHeapNode* r)
