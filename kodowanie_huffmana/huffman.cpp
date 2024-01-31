@@ -3,6 +3,16 @@
 #include "appSettings.h"
 #include <map>
 
+void huffman::encode(char d[], int frequency[])
+{
+	int size = sizeof(d) / sizeof(d[0]);
+}
+
+bool huffman::compareToRight(MinHeapNode* l, MinHeapNode* r)
+{
+	return l->frequency > r->frequency;
+}
+
 void huffman::sort() {
 
 	std::ifstream input(settings->inputFile);

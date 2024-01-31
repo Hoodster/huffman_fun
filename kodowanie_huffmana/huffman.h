@@ -1,21 +1,20 @@
 #pragma once
 #include <map>
+#include <stdio.h>
+#include <stdlib.h>
 #include "appSettings.h"
 
-struct minHeapNode { //najmniejsza liczba
+struct MinHeapNode {
 	char character;
 	unsigned frequency;
-	minHeapNode *left, *right;
+	MinHeapNode *left, *right;
 
-	minHeapNode(char c, unsigned frequency)
+	MinHeapNode(char c, unsigned frequency)
 	{
-		
+		character = c;
+		this->frequency = frequency;
+		left = right = NULL;
 	}
-};
-
-struct minHeap { //najmniejsza ga��� 
-	unsigned size;
-	unsigned capacity;
 };
 
 struct encoding {
@@ -28,18 +27,14 @@ struct decoding {
 
 class huffman {
 private:
-	std::map<char, int> freq;
 	appSettings* settings;
-	minHeapNode minHN;
 
-	//void sort();
+	static bool compareToRight(MinHeapNode *l, MinHeapNode *r);
+	void sort();
 
 public:
 	huffman(appSettings* settings) {
 		this->settings = settings;
 	}
-	void sort();
+	void encode(char d[], int frequency[]);
 };
-
-//utworzenie struktury danych potrzebnych do stworzenia kodowania i dekodowania drzewa huffmana
-//policzenie i posortowanie znak�w
