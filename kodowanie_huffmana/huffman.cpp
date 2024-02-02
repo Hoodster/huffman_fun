@@ -35,21 +35,24 @@ EncodingResult huffman::encode(char d[], int frequency[]) {
 	return EncodingResult('', root);
 }
 
-void huffman::generateCharacterCodes(MinHeapNode *root, int size) {
+void huffman::generateCharacterCodes(MinHeapNode *root, int* codesArray, int size) {
 	/* najwięcej ile może mieć drzewo wyokości w najmniej
 	 * optymalnym wariancie (winorośl czyli wszystkie node'y po jednej stronie)
 	 * ponieważ root nie jest liczony w wysokości drzewa
 	 */
 	int maxTreeHeight = size - 1;
-	int codesArray[maxTreeHeight];
 
 	int top = 0;
 	
-	if (root->left)
-	{
+	if (root->left) {
 		codesArray[top] = 0;
-		
-		
+
+		generateCharacterCodes(root, codesArray, maxTreeHeight);
+	}
+	if (root->right) {
+		codesArray[top] = 1;
+
+		generateCharacterCodes(root,codesArray,maxTreeHeight);
 	}
 }
 

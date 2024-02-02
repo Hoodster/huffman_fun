@@ -43,7 +43,7 @@ public:
 		this->settings = settings;
 	}
 	EncodingResult encode(char d[], int frequency[]);
-	void generateCharacterCodes(MinHeapNode* root);
+	void generateCharacterCodes(MinHeapNode* root, int* codesArray, int size);
 	DecodingResult decode(MinHeapNode* root);
 	
 };
