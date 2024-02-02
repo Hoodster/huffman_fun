@@ -3,22 +3,19 @@
 #include "appSettings.h"
 #include <map>
 
-void huffman::encode(char d[], int frequency[])
-{
+EncodingResult huffman::encode(char d[], int frequency[]) {
 	int size = sizeof(d) / sizeof(d[0]);
 
 	priority_queue<MinHeapNode*, vector<MinHeapNode*>, comparator> priorityQ;
 
-	for (int i = 0; i < size; i++)
-	{
+	for (int i = 0; i < size; i++) {
 		auto node = new MinHeapNode(d[i],frequency[i]);
 		priorityQ.push(node);
 	}
 
 	MinHeapNode root = NULL;
 
-	while (priorityQ.size() > 1)
-	{
+	while (priorityQ.size() > 1) {
 		auto minFreqNode = priorityQ.top();
 		priorityQ.pop();
 		
@@ -35,10 +32,35 @@ void huffman::encode(char d[], int frequency[])
 		priorityQ.push(freq_node);
 	}
 	
+	return EncodingResult('', root);
 }
 
-bool huffman::compareToRight(MinHeapNode* l, MinHeapNode* r)
-{
+void huffman::generateCharacterCodes(MinHeapNode *root, int size) {
+	/* najwięcej ile może mieć drzewo wyokości w najmniej
+	 * optymalnym wariancie (winorośl czyli wszystkie node'y po jednej stronie)
+	 * ponieważ root nie jest liczony w wysokości drzewa
+	 */
+	int maxTreeHeight = size - 1;
+	int codesArray[maxTreeHeight];
+
+	int top = 0;
+	
+	if (root->left)
+	{
+		codesArray[top] = 0;
+		
+		
+	}
+}
+
+char* huffman::decode(MinHeapNode* root) {
+	if (!root) {
+		
+	}
+	return 'bajo jajo';
+}
+
+bool huffman::compareToRight(MinHeapNode* l, MinHeapNode* r) {
 	return l->frequency > r->frequency;
 }
 

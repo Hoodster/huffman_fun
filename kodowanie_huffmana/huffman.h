@@ -9,20 +9,26 @@ struct MinHeapNode {
 	unsigned frequency;
 	MinHeapNode *left, *right;
 
-	MinHeapNode(char c, unsigned frequency)
-	{
+	MinHeapNode(char c, unsigned frequency) {
 		character = c;
 		this->frequency = frequency;
 		left = right = NULL;
 	}
 };
 
-struct encoding {
+struct EncodingResult {
+	char* encodedText;
+	MinHeapNode *root = NULL;
 
+	EncodingResult(char* text, MinHeapNode* heap)
+	{
+		encodedText = text;
+		root = heap;
+	}
 };
 
 struct decoding {
-
+	char* decodedText;
 };
 
 class huffman {
@@ -36,5 +42,8 @@ public:
 	huffman(appSettings* settings) {
 		this->settings = settings;
 	}
-	void encode(char d[], int frequency[]);
+	EncodingResult encode(char d[], int frequency[]);
+	void generateCharacterCodes(MinHeapNode* root);
+	DecodingResult decode(MinHeapNode* root);
+	
 };
