@@ -11,7 +11,7 @@ void huffman::encode(char d[], int frequency[])
 {
 	int size = sizeof(d) / sizeof(d[0]);
 
-	priority_queue<MinHeapNode*, vector<MinHeapNode*> >priorityQ;
+	priority_queue<MinHeapNode*, vector<MinHeapNode*>> priorityQ;
 
 	for (int i = 0; i < size; i++)
 	{
@@ -53,7 +53,6 @@ void huffman::sort() {
 	if (input) {
 		char data;
 		std::map<char, int> freq;
-		while (input.get(data) {
 		while (input.get(data)) {
 			freq[data]++;
 		}
@@ -61,7 +60,6 @@ void huffman::sort() {
 
 		for (const auto& wpis : freq) {
 			std::cout << wpis.first << "   " << wpis.second << std::endl
-			std::cout << wpis.first << "   " << wpis.second << std::endl;
 		}
 	}
 }
