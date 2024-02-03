@@ -37,6 +37,7 @@ struct DecodingResult {
 class huffman {
 private:
 	appSettings* settings;
+	static bool compareToRight(MinHeapNode *l, MinHeapNode *r);
 	std::map<char, char*> huffmanCodes;
 	char* encodeMessage(char* originalMessage);
 
@@ -44,10 +45,11 @@ public:
 	huffman(appSettings* settings) {
 		this->settings = settings;
 	}
+
+  void sortInput();
 	EncodingResult* encode(char d[], int frequency[]);
 	void generateCharacterCodes(MinHeapNode* root, int* codesArray, int size);
 	DecodingResult* decode(MinHeapNode* root, char* encodedText);
-	void sort();
 };
 
 class Comparator {
