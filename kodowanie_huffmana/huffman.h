@@ -39,7 +39,8 @@ private:
 	appSettings* settings;
 	std::map<char, char*> huffmanCodes;
 	char* encodeMessage(char* originalMessage);
-	void writeToFileRec(MinHeapNode* root, const std::ostream& file);
+	MinHeapNode* readFromFileRec(MinHeapNode* root, const std::ifstream& file);
+	void writeToFileRec(MinHeapNode* root, const std::ofstream& file);
 	void generateCharacterCodes(MinHeapNode* root, int* codesArray, int size);
 public:
 	huffman(appSettings* settings) {
@@ -48,6 +49,7 @@ public:
 	EncodingResult* encode(char d[], int frequency[]);
 	DecodingResult* decode(MinHeapNode* root, char* encodedText);
 	void sort();
+	void readFromFile(MinHeapNode* root);
 	void writeEncodingOutputToFile(EncodingResult* result);
 	void writeDecodingOutputToFile(DecodingResult* result);
 };

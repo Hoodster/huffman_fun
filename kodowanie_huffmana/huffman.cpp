@@ -56,7 +56,18 @@ char* huffman::encodeMessage(char* originalMessage) {
 	return result;
 }
 
-void huffman::writeToFileRec(MinHeapNode* root, const std::ostream& file) {
+MinHeapNode* huffman::readFromFileRec(MinHeapNode* root, const std::ifstream& file) {
+	char* value;
+	if (!(file >> value)) {
+		return nullptr;
+	}
+
+	auto* node = new MinHeapNode(value[0], value[2]);
+	node->left = readFromFileRec(root->left, file);
+	node->right = readFromFileRec(root->right, file);
+}
+
+void huffman::writeToFileRec(MinHeapNode* root, const std::ofstream& file) {
 	if (root == nullptr) {
 		return;
 	}
@@ -120,6 +131,13 @@ void huffman::sort() {
 	}
 }
 
+void huffman::readFromFile(MinHeapNode* root) {
+	std::ifstream file(settings->inputFile);
+
+	root = readFromFileRec(root, file);
+	file.close();
+}
+
 void huffman::writeEncodingOutputToFile(EncodingResult* result) {
 	std::ofstream file(settings->outputFile);
 	if (!file.is_open()) {
@@ -128,6 +146,8 @@ void huffman::writeEncodingOutputToFile(EncodingResult* result) {
 	}
 	file << result->encodedText << std::endl;
 	writeToFileRec(result->root, file);
+	
+	file.close();
 }
 
 void huffman::writeDecodingOutputToFile(DecodingResult* result) {
@@ -138,4 +158,5 @@ void huffman::writeDecodingOutputToFile(DecodingResult* result) {
 	}
 
 	file << result->decodedText << std::endl;
+	file.close();
 }
