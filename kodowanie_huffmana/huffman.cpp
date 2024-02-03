@@ -72,11 +72,24 @@ void huffman::generateCharacterCodes(MinHeapNode *root, int* codesArray, int top
 	}
 }
 
-char* huffman::decode(MinHeapNode* root) {
-	if (!root) {
-		
+DecodingResult* huffman::decode(MinHeapNode* root, char* encodedText) {
+	int textLength = sizeof(encodedText) / sizeof(encodedText[0]);
+	char* result = nullptr;
+
+	MinHeapNode* current = root;
+
+	for (int i = 0; i < textLength; i++) {
+		if (encodedText[i] == '0') {
+			current = current->left;
+		} else if (encodedText[i] == '1') {
+			current = current->right;
+		} else {
+			result += current->character;
+			current = root;
+		}
 	}
-	return 'bajo jajo';
+	
+	return new DecodingResult(result);
 }
 
 void huffman::sort() {
