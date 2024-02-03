@@ -12,8 +12,7 @@ int main(int argc, char **argv) {
     appSettings settings;
     parameters paramService = parameters(&settings, argc, argv);
     paramService.getSettings();
-    huffman huffmancode = huffman(&settings);
-    //paramService.readInputFile();  
+    huffman huffmancode = huffman(&settings);  
     huffmancode.sortInput();
 
     return 0;

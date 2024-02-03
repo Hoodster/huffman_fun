@@ -50,12 +50,14 @@ bool compareSort(pair<char, int>& a, pair<char, int>& b) {
 	return a.second < b.second;
 }
 
-void huffman::sortInput() {
+std::vector<pair<char, int>> huffman::sortInput() {
 
 	std::ifstream input(settings->inputFile);
 
 	if (input) {
 		char data;
+		char character;
+		char frequency;
 		std:vector<pair<char, int>> vec;
 		std::map<char, int> freq;
 		while (input.get(data)) {
@@ -63,14 +65,13 @@ void huffman::sortInput() {
 		}
 		input.close();
 
-		for (const auto& wpis : freq) {
-			vec.push_back(wpis);
+		for (const auto& char_freq : freq) {
+			vec.push_back(char_freq);
 		}
 
 		sort(vec.begin(), vec.end(), compareSort);
 
-		for (auto& wpis : vec) {
-			std::cout << wpis.first << "  " << wpis.second << endl;
+		return vec;
 		}
 	}
 }

@@ -36,5 +36,5 @@ public:
 		this->settings = settings;
 	}
 	void encode(char d[], int frequency[]);
-	void sortInput();
+	std::vector<pair<char, int>> sortInput();
 };
