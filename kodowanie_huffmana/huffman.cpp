@@ -1,12 +1,10 @@
 #include "huffman.h"
-#include "parameters.h"
 #include "appSettings.h"
-#include <map>
 
 EncodingResult huffman::encode(char d[], int frequency[]) {
 	int size = sizeof(d) / sizeof(d[0]);
 
-	priority_queue<MinHeapNode*, vector<MinHeapNode*>, comparator> priorityQ;
+	priority_queue<MinHeapNode*, vector<MinHeapNode*>, Comparator> priorityQ;
 
 	for (int i = 0; i < size; i++) {
 		auto node = new MinHeapNode(d[i],frequency[i]);
@@ -31,28 +29,29 @@ EncodingResult huffman::encode(char d[], int frequency[]) {
 
 		priorityQ.push(freq_node);
 	}
-	
-	return EncodingResult('', root);
-}
-
-void huffman::generateCharacterCodes(MinHeapNode *root, int* codesArray, int size) {
 	/* najwięcej ile może mieć drzewo wyokości w najmniej
 	 * optymalnym wariancie (winorośl czyli wszystkie node'y po jednej stronie)
 	 * ponieważ root nie jest liczony w wysokości drzewa
 	 */
 	int maxTreeHeight = size - 1;
+	int codes[maxTreeHeight];
+	generateCharacterCodes(root, codes, 0);
+	return new EncodingResult('', root);
+}
 
-	int top = 0;
-	
+void huffman::generateCharacterCodes(MinHeapNode *root, int* codesArray, int top) {
 	if (root->left) {
 		codesArray[top] = 0;
-
-		generateCharacterCodes(root, codesArray, maxTreeHeight);
-	}
-	if (root->right) {
+		generateCharacterCodes(root->left, codesArray, top + 1);
+	} else if (root->right) {
 		codesArray[top] = 1;
-
-		generateCharacterCodes(root,codesArray,maxTreeHeight);
+		generateCharacterCodes(root->right, codesArray, top + 1);
+	} else {
+		char codesCharacters[top];
+		for (int i = 0; i < top; i++) {
+			codesCharacters[i] = '0' + codesArray[i];;
+		}
+		huffmanCodes[root->character] = codesCharacters;
 	}
 }
 
@@ -61,10 +60,6 @@ char* huffman::decode(MinHeapNode* root) {
 		
 	}
 	return 'bajo jajo';
-}
-
-bool huffman::compareToRight(MinHeapNode* l, MinHeapNode* r) {
-	return l->frequency > r->frequency;
 }
 
 void huffman::sort() {
@@ -83,7 +78,6 @@ void huffman::sort() {
 	//			freq++;
 	//			}
 	//		}
-
 	//	std::cout << symbol << freq << std::endl;
 	//	}
 	//}
