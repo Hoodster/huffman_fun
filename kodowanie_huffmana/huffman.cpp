@@ -56,6 +56,17 @@ char* huffman::encodeMessage(char* originalMessage) {
 	return result;
 }
 
+void huffman::writeToFileRec(MinHeapNode* root, const std::ostream& file) {
+	if (root == nullptr) {
+		return;
+	}
+
+	file << root->character << " " << root->frequency << std::endl;
+
+	writeToFileRec(root->left, file);
+	writeToFileRec(root->right, file);
+}
+
 void huffman::generateCharacterCodes(MinHeapNode *root, int* codesArray, int top) {
 	if (root->left) {
 		codesArray[top] = 0;
@@ -109,3 +120,22 @@ void huffman::sort() {
 	}
 }
 
+void huffman::writeEncodingOutputToFile(EncodingResult* result) {
+	std::ofstream file(settings->outputFile);
+	if (!file.is_open()) {
+		std::cerr << "Error while opening file" << std::endl;
+		return;
+	}
+	file << result->encodedText << std::endl;
+	writeToFileRec(result->root, file);
+}
+
+void huffman::writeDecodingOutputToFile(DecodingResult* result) {
+	std::ofstream file(settings->outputFile);
+	if (!file.is_open()) {
+		std::cerr << "Error while opening file" << std::endl;
+		return;
+	}
+
+	file << result->decodedText << std::endl;
+}

@@ -39,15 +39,17 @@ private:
 	appSettings* settings;
 	std::map<char, char*> huffmanCodes;
 	char* encodeMessage(char* originalMessage);
-
+	void writeToFileRec(MinHeapNode* root, const std::ostream& file);
+	void generateCharacterCodes(MinHeapNode* root, int* codesArray, int size);
 public:
 	huffman(appSettings* settings) {
 		this->settings = settings;
 	}
 	EncodingResult* encode(char d[], int frequency[]);
-	void generateCharacterCodes(MinHeapNode* root, int* codesArray, int size);
 	DecodingResult* decode(MinHeapNode* root, char* encodedText);
 	void sort();
+	void writeEncodingOutputToFile(EncodingResult* result);
+	void writeDecodingOutputToFile(DecodingResult* result);
 };
 
 class Comparator {
