@@ -14,10 +14,10 @@ int main(int argc, char **argv) {
     paramService.getSettings();
     huffman huffmancode = huffman(&settings);
     //paramService.readInputFile();  
-    huffmancode.sort();
+    huffmancode.sortInput();
 
     return 0;
 }
 
-//wyliczenie ka¿dego symbolu i jego licznosci
+//wyliczenie ka¿dego symbolu i jego licznosci (done)
 //Utworzenie struktury danych

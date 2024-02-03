@@ -31,11 +31,10 @@ private:
 
 	static bool compareToRight(MinHeapNode *l, MinHeapNode *r);
 	
-
 public:
 	huffman(appSettings* settings) {
 		this->settings = settings;
 	}
 	void encode(char d[], int frequency[]);
-	void sort();
+	void sortInput();
 };

@@ -46,12 +46,17 @@ bool huffman::compareToRight(MinHeapNode* l, MinHeapNode* r)
 	return l->frequency > r->frequency;
 }
 
-void huffman::sort() {
+bool compareSort(pair<char, int>& a, pair<char, int>& b) {
+	return a.second < b.second;
+}
+
+void huffman::sortInput() {
 
 	std::ifstream input(settings->inputFile);
 
 	if (input) {
 		char data;
+		std:vector<pair<char, int>> vec;
 		std::map<char, int> freq;
 		while (input.get(data)) {
 			freq[data]++;
@@ -59,7 +64,13 @@ void huffman::sort() {
 		input.close();
 
 		for (const auto& wpis : freq) {
-			std::cout << wpis.first << "   " << wpis.second << std::endl
+			vec.push_back(wpis);
+		}
+
+		sort(vec.begin(), vec.end(), compareSort);
+
+		for (auto& wpis : vec) {
+			std::cout << wpis.first << "  " << wpis.second << endl;
 		}
 	}
 }
