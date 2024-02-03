@@ -27,7 +27,7 @@ struct EncodingResult {
 	}
 };
 
-struct decoding {
+struct DecodingResult {
 	char* decodedText;
 };
 
@@ -35,12 +35,13 @@ class huffman {
 private:
 	appSettings* settings;
 	std::map<char, char*> huffmanCodes;
+	char* encodeMessage(char* originalMessage);
 
 public:
 	huffman(appSettings* settings) {
 		this->settings = settings;
 	}
-	EncodingResult encode(char d[], int frequency[]);
+	EncodingResult* encode(char d[], int frequency[]);
 	void generateCharacterCodes(MinHeapNode* root, int* codesArray, int size);
 	DecodingResult decode(MinHeapNode* root);
 	void sort();

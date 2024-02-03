@@ -1,5 +1,4 @@
 #include "huffman.h"
-#include "parameters.h"
 #include "appSettings.h"
 #include <map>
 #include <queue>
@@ -7,7 +6,7 @@
 
 using namespace std;
 
-EncodingResult huffman::encode(char d[], int frequency[]) {
+EncodingResult* huffman::encode(char d[], int frequency[]) {
 	int size = sizeof(d) / sizeof(d[0]);
 
 	priority_queue<MinHeapNode*, vector<MinHeapNode*>, Comparator> priorityQ;
@@ -17,7 +16,7 @@ EncodingResult huffman::encode(char d[], int frequency[]) {
 		priorityQ.push(node);
 	}
 
-	MinHeapNode root = NULL;
+	MinHeapNode* root = nullptr;
 
 	while (priorityQ.size() > 1) {
 		auto minFreqNode = priorityQ.top();
@@ -42,7 +41,19 @@ EncodingResult huffman::encode(char d[], int frequency[]) {
 	int maxTreeHeight = size - 1;
 	int codes[maxTreeHeight];
 	generateCharacterCodes(root, codes, 0);
-	return new EncodingResult('', root);
+	return new EncodingResult(encodeMessage('caban'), root);
+}
+
+char* huffman::encodeMessage(char* originalMessage) {
+	int index = 0;
+	char* result = nullptr;
+	
+	for (auto character : originalMessage) {
+		result += huffmanCodes[character];
+		index++;
+	}
+	
+	return result;
 }
 
 void huffman::generateCharacterCodes(MinHeapNode *root, int* codesArray, int top) {
