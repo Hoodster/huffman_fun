@@ -20,8 +20,7 @@ struct EncodingResult {
 	char* encodedText;
 	MinHeapNode *root = nullptr;
 
-	EncodingResult(char* text, MinHeapNode* heap)
-	{
+	EncodingResult(char* text, MinHeapNode* heap) {
 		encodedText = text;
 		root = heap;
 	}
@@ -29,6 +28,10 @@ struct EncodingResult {
 
 struct DecodingResult {
 	char* decodedText;
+
+	DecodingResult(char* text) {
+		decodedText = text;
+	}
 };
 
 class huffman {
@@ -43,7 +46,7 @@ public:
 	}
 	EncodingResult* encode(char d[], int frequency[]);
 	void generateCharacterCodes(MinHeapNode* root, int* codesArray, int size);
-	DecodingResult decode(MinHeapNode* root);
+	DecodingResult* decode(MinHeapNode* root, char* encodedText);
 	void sort();
 };
 
