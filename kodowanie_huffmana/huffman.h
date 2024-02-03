@@ -9,33 +9,48 @@ struct MinHeapNode {
 	unsigned frequency;
 	MinHeapNode *left, *right;
 
-	MinHeapNode(char c, unsigned frequency)
-	{
+	MinHeapNode(char c, unsigned frequency) {
 		character = c;
 		this->frequency = frequency;
-		left = right = NULL;
+		left = right = nullptr;
 	}
 };
 
-struct encoding {
+struct EncodingResult {
+	char* encodedText;
+	MinHeapNode *root = nullptr;
 
+	EncodingResult(char* text, MinHeapNode* heap)
+	{
+		encodedText = text;
+		root = heap;
+	}
 };
 
-struct decoding {
-
+struct DecodingResult {
+	char* decodedText;
 };
 
 class huffman {
 private:
 	appSettings* settings;
-
-	static bool compareToRight(MinHeapNode *l, MinHeapNode *r);
-	
+	std::map<char, char*> huffmanCodes;
+	char* encodeMessage(char* originalMessage);
 
 public:
 	huffman(appSettings* settings) {
 		this->settings = settings;
 	}
-	void encode(char d[], int frequency[]);
+	EncodingResult* encode(char d[], int frequency[]);
+	void generateCharacterCodes(MinHeapNode* root, int* codesArray, int size);
+	DecodingResult decode(MinHeapNode* root);
 	void sort();
+};
+
+class Comparator {
+public:
+	bool operator()(MinHeapNode* l, MinHeapNode* r)
+	{
+		return r->frequency - l->frequency;
+	}
 };
