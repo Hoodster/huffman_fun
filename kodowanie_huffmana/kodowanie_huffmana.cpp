@@ -12,9 +12,10 @@ int main(int argc, char **argv) {
     appSettings settings;
     parameters paramService = parameters(&settings, argc, argv);
     paramService.getSettings();
-    huffman huffmancode = huffman(&settings);  
-    huffmancode.sortInput();
+    huffman huffmancode = huffman(&settings);
+    huffmancode.encode();
 
+    // huffmancode.decode(); dekodowanie
     return 0;
 }
 

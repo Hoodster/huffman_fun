@@ -127,14 +127,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="fileapi.cpp" />
     <ClCompile Include="huffman.cpp" />
     <ClCompile Include="kodowanie_huffmana.cpp" />
     <ClCompile Include="parameters.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="appSettings.h" />
-    <ClInclude Include="fileapi.h" />
     <ClInclude Include="huffman.h" />
     <ClInclude Include="parameters.h" />
   </ItemGroup>

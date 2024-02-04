@@ -1,8 +1,4 @@
 #include "huffman.h"
-#include "appSettings.h"
-#include <map>
-#include <queue>
-#include <vector>
 
 using namespace std;
 
@@ -11,16 +7,15 @@ using namespace std;
  */
 EncodingResult* huffman::encode() {
 	std::vector<pair<char, int>> charFreq = sortInput();
-
 	//TODO
 
-	int size = sizeof(d) / sizeof(d[0]); // ilość elementów
 
 	priority_queue<MinHeapNode*, vector<MinHeapNode*>, Comparator> priorityQ; // kolejka z priorytetem na namniejszą częstotliwość wystąpień
 
 	//wrzucenie wszystkiego do kolejki
-	for (int i = 0; i < size; i++) {
-		auto node = new MinHeapNode(d[i],frequency[i]);
+	for (int i = 0; i < charFreq.size(); i++) {
+		auto& o = charFreq[i];
+		auto node = new MinHeapNode(o.first, o.second);
 		priorityQ.push(node);
 	}
 
@@ -47,28 +42,33 @@ EncodingResult* huffman::encode() {
 	 * optymalnym wariancie (winorośl czyli wszystkie node'y po jednej stronie)
 	 * ponieważ root nie jest liczony w wysokości drzewa
 	 */
-	int maxTreeHeight = size - 1;
-	int codes[maxTreeHeight]; // możliwa długość kodu dla znaku
+	int maxTreeHeight = charFreq.size() - 1;
+	int* codes = new int[maxTreeHeight]; // możliwa długość kodu dla znaku
 	generateCharacterCodes(root, codes, 0); // generowanie kodów huffmana dla znaków
-	auto result = new EncodingResult(encodeMessage('caban'), root);
-	fileapi.writeEncodingOutputToFile(result); // zapisanie pliku 
+
+	const char* mess = "ala ma kota";
+	auto result = new EncodingResult(encodeMessage(mess), root);
+	writeEncodingOutputToFile(result); // zapisanie pliku 
 	return result; // zwracamy wyniki generując skompresowaną wiadomość w locie
 }
 
 // kodowanie wiadomości z tablicy kodów
-char* huffman::encodeMessage(char* originalMessage) {
-	char* result = nullptr;
-	
+string huffman::encodeMessage(const char* originalMessage) {
+	size_t size = strlen(originalMessage);
+	string result;
+
 	// dla każdego znaku znajdź jego wartość i dodaj do wiadomości.
 	// Znak służy jako klucz:
-	//		f: 01001,
-	//		a: 01
-	for (auto character : originalMessage) { 
-		result += huffmanCodes[character];
+	//      f: 01001,
+	//      a: 01
+	for (size_t i = 0; i < size; i++) {
+		result += huffmanCodes[originalMessage[i]];
 	}
-	
+
 	return result;
 }
+
+
 
 /*
  * stworzenie tablicy kodów mówiącej tyle, że
@@ -80,11 +80,13 @@ void huffman::generateCharacterCodes(MinHeapNode *root, int* codesArray, int top
 	if (root->left) {
 		codesArray[top] = 0;
 		generateCharacterCodes(root->left, codesArray, top + 1); //rekurencja, przechodzimy do następnej pozycji kodu dla literki i powtarzamy porównania 
-	} else if (root->right) {
+	} 
+	if (root->right) {
 		codesArray[top] = 1;
 		generateCharacterCodes(root->right, codesArray, top + 1);
-	} else {
-		char codesCharacters[top];
+	} 
+	if (!root->right && !root->left) {
+		auto codesCharacters = new char[top];
 		for (int i = 0; i < top; i++) {
 			codesCharacters[i] = '0' + codesArray[i]; //zmiana int na char poprzez dodanie znakowego 0. Śmieszny trick ogólnie w cpp.
 		}
@@ -94,8 +96,9 @@ void huffman::generateCharacterCodes(MinHeapNode *root, int* codesArray, int top
 
 // główna funkcja do dekodowania
 DecodingResult* huffman::decode() {
-	EncodingResult* fileContent = fileapi.readFromFile();
-	auto root = fileContent->root, encodedText = fileContent->encodedText;
+	EncodingResult* fileContent = readFromFile();
+	auto root = fileContent->root;
+	auto& encodedText = fileContent->encodedText;
 	int textLength = sizeof(encodedText) / sizeof(encodedText[0]);
 	char* resultText = nullptr;
 
@@ -113,8 +116,8 @@ DecodingResult* huffman::decode() {
 		}
 	}
 
-	auto result = new DecodingResult(resultText);
-	fileapi.writeDecodingOutputToFile(result);
+	auto* result = new DecodingResult(resultText);
+	writeDecodingOutputToFile(result);
 	return result;
 }
 
@@ -123,9 +126,9 @@ bool compareSort(pair<char, int>& a, pair<char, int>& b) {
 }
 
 std::vector<pair<char, int>> huffman::sortInput() {
-
-	std::ifstream input(settings->inputFile);
-	std:vector<pair<char, int>> vec;
+	fstream input(settings->inputFile);
+	std::vector<pair<char, int>> vec;
+	string text = "";
 
 	if (input) {
 		char data;
@@ -135,6 +138,7 @@ std::vector<pair<char, int>> huffman::sortInput() {
 		std::map<char, int> freq;
 		while (input.get(data)) {
 			freq[data]++;
+			text += data;
 		}
 		input.close();
 
@@ -145,5 +149,69 @@ std::vector<pair<char, int>> huffman::sortInput() {
 		sort(vec.begin(), vec.end(), compareSort);
 	}
 
+	settings->text = text;
+
 	return vec;
+}
+
+EncodingResult* huffman::readFromFile() {
+	MinHeapNode* root = nullptr;
+	std::fstream file(settings->inputFile);
+	std::string encodedText = "";
+	file >> encodedText;
+	root = readFromFileRec(root, file);
+	file.close();
+	return new EncodingResult(encodedText, root);
+}
+
+void huffman::writeEncodingOutputToFile(EncodingResult* result) {
+	std::fstream file(settings->outputFile);
+	if (!file.is_open()) {
+		std::cerr << "Error while opening file" << std::endl;
+		return;
+	}
+	file << result->encodedText << std::endl;
+	writeToFileRec(result->root, file);
+
+	file.close();
+}
+
+void huffman::writeDecodingOutputToFile(DecodingResult* result) {
+	std::fstream file(settings->outputFile);
+	if (!file.is_open()) {
+		std::cerr << "Error while opening file" << std::endl;
+		return;
+	}
+
+	file << result->decodedText << std::endl;
+	file.close();
+}
+
+//pobranie node'a z wiersza i przejście dalej do gałęzi potomnych, algorytm to deep first search (DFS)
+//powiedz kokotowi to się zesra
+MinHeapNode* huffman::readFromFileRec(MinHeapNode* root, std::fstream& file) {
+	std::string value;
+
+	// exit condition
+	if (!(file >> value)) {
+		return nullptr;
+	}
+
+	auto* node = new MinHeapNode(value[0], value[2]);
+	node->left = readFromFileRec(root->left, file);
+	node->right = readFromFileRec(root->right, file);
+
+	return node;
+}
+
+// to co wyżej tylko zapisywanie wierszy
+void huffman::writeToFileRec(MinHeapNode* root, std::fstream& file) {
+	if (root == nullptr) {
+		return;
+	}
+
+	file << root->character << " " << root->frequency << std::endl;
+
+	writeToFileRec(root->left, file);
+	writeToFileRec(root->right, file);
 }
