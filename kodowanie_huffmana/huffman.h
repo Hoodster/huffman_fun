@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "appSettings.h"
+#include "fileapi.h"
 
 // struktura dla node'a w drzewie
 struct MinHeapNode {
@@ -44,25 +45,22 @@ struct DecodingResult {
 class huffman {
 private:
 	appSettings* settings; // ustawienia aplikacji
+	fileapi fileapi;
 	std::map<char, char*> huffmanCodes; // lista klucz-wartość dla kodowań znaków
 	
+	void sortInput();
 	char* encodeMessage(char* originalMessage);
-	MinHeapNode* readFromFileRec(MinHeapNode* root, const std::ifstream& file);
-	void writeToFileRec(MinHeapNode* root, const std::ofstream& file);
 	void generateCharacterCodes(MinHeapNode* root, int* codesArray, int size);
 public:
 	// konstruktor i przypisanie ustawień aplikacji (tego co wpisał użytkownik)
 	huffman(appSettings* settings) {
+		auto fapi = new class fileapi(*settings);
 		this->settings = settings;
+		this->fileapi = *fapi;
 	}
 
 	EncodingResult* encode(char d[], int frequency[]);
-	DecodingResult* decode(MinHeapNode* root, char* encodedText);
-
-	void sortInput();
-	void readFromFile(MinHeapNode* root);
-	void writeEncodingOutputToFile(EncodingResult* result);
-	void writeDecodingOutputToFile(DecodingResult* result);
+	DecodingResult* decode();
 };
 
 class Comparator {

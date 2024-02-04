@@ -9,7 +9,11 @@ using namespace std;
 /*
  * główna funkcja dla kodowania huffmana, na końcu zapisuje plik o wskazanej nazwie z zakodowanym tekstem oraz drzewem
  */
-EncodingResult* huffman::encode(char d[], int frequency[]) {
+EncodingResult* huffman::encode() {
+	std::vector<pair<char, int>> charFreq = sortInput();
+
+	//TODO
+
 	int size = sizeof(d) / sizeof(d[0]); // ilość elementów
 
 	priority_queue<MinHeapNode*, vector<MinHeapNode*>, Comparator> priorityQ; // kolejka z priorytetem na namniejszą częstotliwość wystąpień
@@ -46,7 +50,9 @@ EncodingResult* huffman::encode(char d[], int frequency[]) {
 	int maxTreeHeight = size - 1;
 	int codes[maxTreeHeight]; // możliwa długość kodu dla znaku
 	generateCharacterCodes(root, codes, 0); // generowanie kodów huffmana dla znaków
-	return new EncodingResult(encodeMessage('caban'), root); // zwracamy wyniki generując skompresowaną wiadomość w locie
+	auto result = new EncodingResult(encodeMessage('caban'), root);
+	fileapi.writeEncodingOutputToFile(result); // zapisanie pliku 
+	return result; // zwracamy wyniki generując skompresowaną wiadomość w locie
 }
 
 // kodowanie wiadomości z tablicy kodów
@@ -62,33 +68,6 @@ char* huffman::encodeMessage(char* originalMessage) {
 	}
 	
 	return result;
-}
-
-//pobranie node'a z wiersza i przejście dalej do gałęzi potomnych, algorytm to deep first search (DFS)
-//powiedz kokotowi to się zesra
-MinHeapNode* huffman::readFromFileRec(MinHeapNode* root, const std::ifstream& file) {
-	char* value;
-	
-	// exit condition
-	if (!(file >> value)) {
-		return nullptr;
-	}
-
-	auto* node = new MinHeapNode(value[0], value[2]);
-	node->left = readFromFileRec(root->left, file);
-	node->right = readFromFileRec(root->right, file);
-}
-
-// to co wyżej tylko zapisywanie wierszy
-void huffman::writeToFileRec(MinHeapNode* root, const std::ofstream& file) {
-	if (root == nullptr) {
-		return;
-	}
-
-	file << root->character << " " << root->frequency << std::endl;
-
-	writeToFileRec(root->left, file);
-	writeToFileRec(root->right, file);
 }
 
 /*
@@ -114,9 +93,11 @@ void huffman::generateCharacterCodes(MinHeapNode *root, int* codesArray, int top
 }
 
 // główna funkcja do dekodowania
-DecodingResult* huffman::decode(MinHeapNode* root, char* encodedText) {
+DecodingResult* huffman::decode() {
+	EncodingResult* fileContent = fileapi.readFromFile();
+	auto root = fileContent->root, encodedText = fileContent->encodedText;
 	int textLength = sizeof(encodedText) / sizeof(encodedText[0]);
-	char* result = nullptr;
+	char* resultText = nullptr;
 
 	MinHeapNode* current = root;
 
@@ -127,12 +108,14 @@ DecodingResult* huffman::decode(MinHeapNode* root, char* encodedText) {
 		} else if (encodedText[i] == '1') {
 			current = current->right;
 		} else {
-			result += current->character;
+			resultText += current->character;
 			current = root;
 		}
 	}
-	
-	return new DecodingResult(result);
+
+	auto result = new DecodingResult(resultText);
+	fileapi.writeDecodingOutputToFile(result);
+	return result;
 }
 
 bool compareSort(pair<char, int>& a, pair<char, int>& b) {
@@ -142,12 +125,13 @@ bool compareSort(pair<char, int>& a, pair<char, int>& b) {
 std::vector<pair<char, int>> huffman::sortInput() {
 
 	std::ifstream input(settings->inputFile);
+	std:vector<pair<char, int>> vec;
 
 	if (input) {
 		char data;
 		char character;
 		char frequency;
-		std:vector<pair<char, int>> vec;
+		
 		std::map<char, int> freq;
 		while (input.get(data)) {
 			freq[data]++;
@@ -159,37 +143,7 @@ std::vector<pair<char, int>> huffman::sortInput() {
 		}
 
 		sort(vec.begin(), vec.end(), compareSort);
-
-		return vec;
-		}
-}
-
-void huffman::readFromFile(MinHeapNode* root) {
-	std::ifstream file(settings->inputFile);
-
-	root = readFromFileRec(root, file);
-	file.close();
-}
-
-void huffman::writeEncodingOutputToFile(EncodingResult* result) {
-	std::ofstream file(settings->outputFile);
-	if (!file.is_open()) {
-		std::cerr << "Error while opening file" << std::endl;
-		return;
-	}
-	file << result->encodedText << std::endl;
-	writeToFileRec(result->root, file);
-	
-	file.close();
-}
-
-void huffman::writeDecodingOutputToFile(DecodingResult* result) {
-	std::ofstream file(settings->outputFile);
-	if (!file.is_open()) {
-		std::cerr << "Error while opening file" << std::endl;
-		return;
 	}
 
-	file << result->decodedText << std::endl;
-	file.close();
+	return vec;
 }
