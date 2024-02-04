@@ -2,6 +2,7 @@
 #include <map>
 #include <stdio.h>
 #include <stdlib.h>
+#include <vector>
 #include "appSettings.h"
 
 struct MinHeapNode {
@@ -46,7 +47,7 @@ public:
 		this->settings = settings;
 	}
 
-  void sortInput();
+	std::vector<pair<char, int>> sortInput();
 	EncodingResult* encode(char d[], int frequency[]);
 	void generateCharacterCodes(MinHeapNode* root, int* codesArray, int size);
 	DecodingResult* decode(MinHeapNode* root, char* encodedText);
