@@ -113,18 +113,3 @@ void parameters::getSettings() {
         }
     }
 }
-
-std::string parameters::readInputFile()
-{
-    std::string dane;
-    std::ifstream readInput(this->settings->inputFile);
-    
-    if (readInput.is_open()) {
-        while (readInput) {
-            dane = readInput.get();
-            std::cout << dane;
-        }
-    }
-        readInput.close();
-      return dane;
-}

@@ -114,21 +114,33 @@ DecodingResult* huffman::decode(MinHeapNode* root, char* encodedText) {
 	return new DecodingResult(result);
 }
 
-void huffman::sort() {
+bool compareSort(pair<char, int>& a, pair<char, int>& b) {
+	return a.second < b.second;
+}
+
+std::vector<pair<char, int>> huffman::sortInput() {
+
 	std::ifstream input(settings->inputFile);
 
 	if (input) {
 		char data;
+		char character;
+		char frequency;
+		std:vector<pair<char, int>> vec;
 		std::map<char, int> freq;
 		while (input.get(data)) {
 			freq[data]++;
 		}
 		input.close();
 
-		for (const auto& wpis : freq) {
-			std::cout << wpis.first << "   " << wpis.second << std::endl;
+		for (const auto& char_freq : freq) {
+			vec.push_back(char_freq);
 		}
-	}
+
+		sort(vec.begin(), vec.end(), compareSort);
+
+		return vec;
+		}
 }
 
 void huffman::readFromFile(MinHeapNode* root) {

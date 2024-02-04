@@ -37,6 +37,7 @@ struct DecodingResult {
 class huffman {
 private:
 	appSettings* settings;
+	static bool compareToRight(MinHeapNode *l, MinHeapNode *r);
 	std::map<char, char*> huffmanCodes;
 	char* encodeMessage(char* originalMessage);
 	MinHeapNode* readFromFileRec(MinHeapNode* root, const std::ifstream& file);
@@ -46,8 +47,11 @@ public:
 	huffman(appSettings* settings) {
 		this->settings = settings;
 	}
+
+  void sortInput();
 	EncodingResult* encode(char d[], int frequency[]);
 	DecodingResult* decode(MinHeapNode* root, char* encodedText);
+
 	void sort();
 	void readFromFile(MinHeapNode* root);
 	void writeEncodingOutputToFile(EncodingResult* result);
