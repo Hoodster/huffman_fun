@@ -22,7 +22,7 @@ EncodingResult* huffman::encode() {
 	MinHeapNode* root = nullptr; // korzeń drzewa
 
 	while (priorityQ.size() > 1) {
-		auto minFreqNode = priorityQ.top();
+		auto minFreqNode = priorityQ.top(); //powinien być brany najrzadszy znak
 		priorityQ.pop();
 		
 		auto secondMinFreqNode = priorityQ.top();
@@ -88,6 +88,7 @@ void huffman::generateCharacterCodes(MinHeapNode *root, int* codesArray, int top
 		auto codesCharacters = new char[top];
 		for (int i = 0; i < top; i++) {
 			codesCharacters[i] = '0' + codesArray[i]; //zmiana int na char poprzez dodanie znakowego 0. Śmieszny trick ogólnie w cpp.
+			codesCharacters[i + 1] = '\0'; // cpp trick. znak zamykający i tworzący walidny string dla składni C i przez to CPP. Usuwa te dziwne znaczki z kodu.
 		}
 		huffmanCodes[root->character] = codesCharacters; //przypisanie kodu do znaku
 	}

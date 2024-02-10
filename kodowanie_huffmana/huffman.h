@@ -76,6 +76,6 @@ class Comparator {
 public:
 	bool operator()(MinHeapNode* l, MinHeapNode* r)
 	{
-		return r->frequency > l->frequency;
+		return l->frequency > r->frequency;
 	}
 };
