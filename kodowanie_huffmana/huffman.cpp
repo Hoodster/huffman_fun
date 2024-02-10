@@ -46,8 +46,7 @@ EncodingResult* huffman::encode() {
 	int* codes = new int[maxTreeHeight]; // możliwa długość kodu dla znaku
 	generateCharacterCodes(root, codes, 0); // generowanie kodów huffmana dla znaków
 
-	const char* mess = "ala ma kota";
-	auto result = new EncodingResult(encodeMessage(mess), root);
+	auto result = new EncodingResult(encodeMessage(settings->text.c_str()), root);
 	writeEncodingOutputToFile(result); // zapisanie pliku 
 	return result; // zwracamy wyniki generując skompresowaną wiadomość w locie
 }
@@ -198,6 +197,7 @@ MinHeapNode* huffman::readFromFileRec(MinHeapNode* root, std::fstream& file) {
 	}
 
 	auto* node = new MinHeapNode(value[0], value[2]);
+	root = node;
 	node->left = readFromFileRec(root->left, file);
 	node->right = readFromFileRec(root->right, file);
 
