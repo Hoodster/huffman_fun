@@ -81,6 +81,11 @@ void parameters::getAlgorithmMode(char* argument, bool* paramIsActive) {
         
         *paramIsActive = true;
     }
+  /*  else 
+    {
+        std::cout << "nie wybrano opcji programu\n" << "-c kodowanie" << "-d dekodowanie";
+        return;
+    }*/
 }
 
 bool parameters::isArgCountValid() {

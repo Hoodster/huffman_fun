@@ -13,9 +13,11 @@ int main(int argc, char **argv) {
     parameters paramService = parameters(&settings, argc, argv);
     paramService.getSettings();
     huffman huffmancode = huffman(&settings);
-    huffmancode.encode();
-
-    // huffmancode.decode(); dekodowanie
+    if (settings.operationMode == encoding) {
+        huffmancode.encode();
+    } else {
+        huffmancode.decode();
+    } 
     return 0;
 }
 

@@ -67,8 +67,6 @@ string huffman::encodeMessage(const char* originalMessage) {
 	return result;
 }
 
-
-
 /*
  * stworzenie tablicy kodów mówiącej tyle, że
  * od root musisz posuwać się w lewo jeżeli 0 i prawo jeżeli 1 czyli
@@ -99,13 +97,18 @@ DecodingResult* huffman::decode() {
 	EncodingResult* fileContent = readFromFile();
 	auto root = fileContent->root;
 	auto& encodedText = fileContent->encodedText;
-	int textLength = sizeof(encodedText) / sizeof(encodedText[0]);
-	char* resultText = nullptr;
+	int textLength = encodedText.size();
+	std::string resultText = "";
 
 	MinHeapNode* current = root;
 
 	// odwrócenie tablicy kodów z generateCharacterCodes()
 	for (int i = 0; i < textLength; i++) {
+		if (current && (!current->left && !current->right)) {
+			resultText += current->character;
+			current = root;
+		}
+
 		if (encodedText[i] == '0') {
 			current = current->left;
 		} else if (encodedText[i] == '1') {
@@ -115,6 +118,8 @@ DecodingResult* huffman::decode() {
 			current = root;
 		}
 	}
+
+	resultText += current->character;
 
 	auto* result = new DecodingResult(resultText);
 	writeDecodingOutputToFile(result);
@@ -190,28 +195,40 @@ void huffman::writeDecodingOutputToFile(DecodingResult* result) {
 //pobranie node'a z wiersza i przejście dalej do gałęzi potomnych, algorytm to deep first search (DFS)
 //powiedz kokotowi to się zesra
 MinHeapNode* huffman::readFromFileRec(MinHeapNode* root, std::fstream& file) {
-	std::string value;
+	char character;
+	unsigned frequency;
 
 	// exit condition
-	if (!(file >> value)) {
+	if (!(file >> character >> frequency) || character == '#') {
 		return nullptr;
 	}
 
-	auto* node = new MinHeapNode(value[0], value[2]);
+	if (character == '~') {
+		character = ' ';
+	}
+
+	auto* node = new MinHeapNode(character, frequency);
 	root = node;
 	node->left = readFromFileRec(root->left, file);
 	node->right = readFromFileRec(root->right, file);
-
+	
 	return node;
 }
 
 // to co wyżej tylko zapisywanie wierszy
 void huffman::writeToFileRec(MinHeapNode* root, std::fstream& file) {
 	if (root == nullptr) {
+		file << "# 0" << std::endl;
 		return;
 	}
 
-	file << root->character << " " << root->frequency << std::endl;
+	char character = root->character;
+
+	if (character == ' ') {
+		character = '~';
+	}
+
+	file << character << " " << root->frequency << std::endl;
 
 	writeToFileRec(root->left, file);
 	writeToFileRec(root->right, file);
